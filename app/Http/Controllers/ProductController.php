@@ -29,8 +29,32 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|numeric|min:0',
         ]);
-        
-        return view('products.index', compact('products'));
+
+        try {
+            $baseUrl = config('services.api_backend_url');
+            $url = rtrim($baseUrl, '/') . '/api/products';
+
+            $response = Http::timeout(5)
+                ->asJson()
+                ->post($url, [
+                    'name' => $validated['name'],
+                    'stock' => (int) $validated['stock'],
+                    'price' => (int) $validated['price'],
+                ]);
+
+            if ($response->ok()) {
+                $payload = $response->json();
+                if ($payload['success' ?? false] == true) {
+                    return redirect('/products')->with('status', $payload['message'] ?? 'Product created successfully');
+                }
+            }
+
+            $payload = $response->json();
+            $errors = $payload['errors'] ?? [];
+            return back()->withErrors($errors)->withInput();
+        } catch (\Throwable $e) {
+            return back()->withErrors(['Unexpected error, please try again'])->withInput();
+        }
     }
 
     public function create()

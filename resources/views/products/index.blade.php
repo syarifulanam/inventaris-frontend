@@ -27,7 +27,7 @@
                     <td>{{ $product['created_at'] ?? '' }}</td>
                     <td>{{ $product['updated_at'] ?? ' ' }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="#" class="btn btn-sm btn-outline-primary">Jual</a>
                         <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
                     </td>
                 </tr>
