@@ -64,30 +64,55 @@ class ProductController extends Controller
 
     public function sell(Request $request, $id)
     {
-        $request->validate([
-            'qty' => 'required|integer|min:1'
+        $validated = $request->validate([
+            'qty' => 'required|integer|min:1',
         ]);
 
         try {
             $baseUrl = rtrim(config('services.api_backend_url'), '/');
             $url = $baseUrl . "/api/products/{$id}/sell";
 
-            $response = Http::asJson()
+            $response = Http::timeout(5)
+                ->asJson()
                 ->post($url, [
-                    'qty' => $request->qty
+                    'qty' => (int) $validated['qty'],
                 ]);
 
-            $payload = $response->json();
+            if ($response->ok()) {
+                $payload = $response->json();
+                if (($payload['success'] ?? false) === true) {
+                    return redirect('/products')->with('status', $payload['message'] ?? 'Produk berhasil dijual');
+                }
+            }
 
-            return response()->json([
-                'success' => $payload['success'] ?? false,
-                'message' => $payload['message'] ?? 'Gagal menjual produk'
-            ]);
+            if ($response->status() === 422) {
+                $payload = $response->json();
+                $errors = $payload['errors'] ?? [];
+                return back()->withErrors($errors)->withInput();
+            }
+
+            $message = $response->json('message') ?? 'Gagal menjual produk';
+            return back()->withErrors([$message])->withInput();
         } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Server error'
-            ], 500);
+            return back()->withErrors(['Unexpected error, please try again.'])->withInput();
         }
+    }
+
+    public function sellCreate($id)
+    {
+        // Optional: fetch product detail if needed for display
+        try {
+            $baseUrl = rtrim(config('services.api_backend_url'), '/');
+            $url = $baseUrl . "/api/products/{$id}";
+            $response = Http::timeout(5)->get($url);
+            $product = $response->ok() ? ($response->json('data') ?? null) : null;
+        } catch (\Throwable $e) {
+            $product = null;
+        }
+
+        return view('products.sell', [
+            'productId' => $id,
+            'product' => $product,
+        ]);
     }
 }
