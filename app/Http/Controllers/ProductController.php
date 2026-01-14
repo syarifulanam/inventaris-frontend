@@ -61,4 +61,33 @@ class ProductController extends Controller
     {
         return view('products.create');
     }
+
+    public function sell(Request $request, $id)
+    {
+        $request->validate([
+            'qty' => 'required|integer|min:1'
+        ]);
+
+        try {
+            $baseUrl = rtrim(config('services.api_backend_url'), '/');
+            $url = $baseUrl . "/api/products/{$id}/sell";
+
+            $response = Http::asJson()
+                ->post($url, [
+                    'qty' => $request->qty
+                ]);
+
+            $payload = $response->json();
+
+            return response()->json([
+                'success' => $payload['success'] ?? false,
+                'message' => $payload['message'] ?? 'Gagal menjual produk'
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error'
+            ], 500);
+        }
+    }
 }
