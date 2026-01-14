@@ -19,8 +19,6 @@
                 <th>Name</th>
                 <th>Price</th>
                 <th>Stock</th>
-                <th>Created At</th>
-                <th>Updated At</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -29,60 +27,13 @@
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $product['name'] }}</td>
-                    <td>${{ $product['price'] }}</td>
+                    <td>Rp{{ $product['price'] }}</td>
                     <td>{{ $product['stock'] }}</td>
-                    <td>{{ $product['created_at'] ?? '' }}</td>
-                    <td>{{ $product['updated_at'] ?? ' ' }}</td>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-primary"
-                            onclick="sellProduct({{ $product['id'] }}, {{ $product['stock'] }})">
-                            Sell
-                            {{-- <a href="#" class="btn btn-sm btn-outline-danger">Delete</a> --}}
-                        </button>
+                        <a href="/products/{{ $product['id'] }}/sell/create" class="btn btn-sm btn-outline-primary">Sell</a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 @endsection
-
-<script>
-    function sellProduct(id, stock) {
-        let qty = prompt("Masukkan jumlah yang dijual:");
-
-        if (qty === null) return;
-
-        qty = parseInt(qty);
-
-        if (isNaN(qty) || qty <= 0) {
-            alert("Jumlah tidak valid");
-            return;
-        }
-
-        if (qty > stock) {
-            alert("❌ Stok tidak mencukupi");
-            return;
-        }
-
-        fetch(`/products/${id}/sell`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    qty: qty
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert("✅ Produk berhasil dijual");
-                    location.reload();
-                } else {
-                    alert(data.message || "Gagal menjual produk");
-                }
-            })
-            .catch(() => alert("Server error"));
-    }
-</script>
