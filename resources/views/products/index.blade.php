@@ -3,7 +3,7 @@
 @section('content')
     <div class = "d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0">Products</h1>
-        <a href="#" class="btn btn-success">Add</a>
+        <a href="/products/create" class="btn btn-success">Add</a>
     </div>
     <table class="table table-striped">
         <thead>
