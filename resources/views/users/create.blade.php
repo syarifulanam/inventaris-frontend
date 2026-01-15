@@ -36,8 +36,8 @@
             <select name="role_id" class="form-select" required>
                 <option value="">-- Pilih Role --</option>
                 @foreach ($roles as $role)
-                    <option value="{{ $role->id }}">
-                        {{ $role->name }}
+                    <option value="{{ $role['id'] ?? '' }}">
+                        {{ $role['role'] ?? '-' }}
                     </option>
                 @endforeach
             </select>

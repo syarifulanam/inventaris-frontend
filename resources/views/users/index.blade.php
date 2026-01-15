@@ -28,9 +28,10 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $user['name'] }}</td>
                     <td>{{ $user['email'] }}</td>
-                    <td>{{ $user['role']['name'] ?? '-' }}</td>
+                    <td>{{ $user['role']['role'] ?? '-' }}</td>
                     <td>
-                        <button class="button">change role</button>
+                        <a href="/users/{{ $user['id'] }}/change-role" class="btn btn-sm btn-outline-primary">Change
+                            Role</a>
                     </td>
                 </tr>
             @endforeach
