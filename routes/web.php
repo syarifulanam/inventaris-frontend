@@ -14,3 +14,7 @@ Route::post('/products/{id}/sell', [ProductController::class, 'sell'])->name('pr
 Route::get('/products/{id}/sell/create', [ProductController::class, 'sellCreate'])->name('products.sell.create');
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
+Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+Route::get('/users/{id}/change-role', [UserController::class, 'changeRoleCreate'])->name('users.change-role.create');
+Route::put('/users/{id}/change-role', [UserController::class, 'changeRole'])->name('users.change-role');
