@@ -19,6 +19,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -27,7 +28,10 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $user['name'] }}</td>
                     <td>{{ $user['email'] }}</td>
-                    <td>{{ $user['role'] }}</td>
+                    <td>{{ $user['role']['name'] ?? '-' }}</td>
+                    <td>
+                        <button class="button">change role</button>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
